@@ -1,0 +1,30 @@
+name: Java CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Instalando JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    - name: Compilar o Java
+      run: javac -cp src src/Main.java
+      
+    - name: Compilar o Teste
+      run: javac -cp src src/Teste.java
+      
+    - name: Executar o Teste
+      run: |
+       java -cp src TesteControleAcesso
+      
