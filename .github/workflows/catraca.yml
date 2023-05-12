@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'openjdk'
+        distribution: 'adopt'
     - name: Compile Java
       run: javac -cp src src/Main.java
       
@@ -27,3 +27,11 @@ jobs:
     - name: Run Test
       run: |
        java -cp src TesteControleAcesso
+
+    - name: Docker Build & Push Action
+      uses: mr-smithers-excellent/docker-build-push@v6.2
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: your-docker-repository-name
+        tags: latest
