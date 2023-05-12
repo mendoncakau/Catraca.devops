@@ -1,30 +1,30 @@
-name: Java CI
+name: Build Java
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Instalando JDK
-      uses: actions/setup-java@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up JDK
+      uses: actions/setup-java@v1
       with:
         java-version: '11'
-        distribution: 'temurin'
-    - name: Compilar o Java
-      run: javac -cp src src/Main.java
-      
-    - name: Compilar o Teste
-      run: javac -cp src src/Teste.java
-      
-    - name: Executar o Teste
+        
+    - name: Build and Test
       run: |
-       java -cp src TesteControleAcesso
+        ./gradlew build
+        ./gradlew test
+        
+    - name: Run Test
+      run: java -cp build/classes/java/main TesteControleAcesso
       
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: my-docker-repo/my-java-app:latest
