@@ -1,29 +1,41 @@
-name: Java CI
+name: Java CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
+
+env:
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+  IMAGE_NAME: my-java-app
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'adopt'
-    - name: Compile Java
-      run: javac -cp src src/Main.java
-      
-    - name: Compile Test
-      run: javac -cp src src/TesteControleAcesso.java
-      
-    - name: Run Test
-      run: |
-       java -cp src TesteControleAcesso
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Run tests
+        run: mvn test
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          build-args: |
+            JAR_FILE=target/my-java-app.jar
+            DOCKER_HUB_USERNAME=${{ env.DOCKER_HUB_USERNAME }}
+            DOCKER_HUB_PASSWORD=${{ env.DOCKER_HUB_PASSWORD }}
