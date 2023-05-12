@@ -1,49 +1,36 @@
-name: Java CI
+name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
-
-env:
-  DOCKER_REGISTRY: <registry-name>
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  DOCKER_IMAGE_NAME: <image-name>
+    branches: [ main ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK
+
+    - name: Set up JDK 11
       uses: actions/setup-java@v2
       with:
         java-version: '11'
         distribution: 'adopt'
-    - name: Compile Java
-      run: javac -cp src src/Main.java
-      
-    - name: Compile Test
-      run: javac -cp src src/TesteControleAcesso.java
-      
-    - name: Run Test
-      run: |
-       java -cp src TesteControleAcesso
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ env.DOCKER_USERNAME }}
-        password: ${{ env.DOCKER_PASSWORD }}
+    - name: Build with Gradle
+      run: ./gradlew build
 
-    - name: Build Docker image
+    - name: Test with JUnit
+      run: ./gradlew test
+
+    - name: Build and Push Docker Image
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: Dockerfile
         push: true
-        tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+        tags: <kauem>/<dockercatraca>:latest
+        secrets: |
+          ${{ secrets.DOCKER_USERNAME }}
+          ${{ secrets.DOCKER_PASSWORD }}
