@@ -1,42 +1,29 @@
-name: Java CI/CD
+name: Java CI
 
 on:
   push:
-    branches: [main]
+    branches: [ "main" ]
   pull_request:
-    branches: [main]
+    branches: [ "main" ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
+    - uses: actions/checkout@v2
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-
-    - name: Compile code
+        distribution: 'openjdk'
+    - name: Compile Java
       run: javac -cp src src/Main.java
-
-    - name: Compile tests
+      
+    - name: Compile Test
       run: javac -cp src src/TesteControleAcesso.java
-
-    - name: Run tests
-      run: java -cp src TesteControleAcesso
-
-    - name: Docker Build & Push
-      uses: mr-smithers-excellent/docker-build-push@v6.2
-      with:
-        context: .
-        push: true
-        tags: kauem/my-java-app:latest
-        build_args: |
-          JAVA_VERSION=11
-          JAR_FILE=Main.jar
-        secrets: |
-          DOCKER_USERNAME
-          DOCKER_PASSWORD
+      
+    - name: Run Test
+      run: |
+       java -cp src TesteControleAcesso
