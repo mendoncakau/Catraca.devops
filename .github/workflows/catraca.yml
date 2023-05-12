@@ -1,30 +1,24 @@
-name: Build Java
+name: Java CI
 
 on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
+    - name: Verificar código
       uses: actions/checkout@v2
-      
-    - name: Set up JDK
-      uses: actions/setup-java@v1
+
+    - name: Configurar JDK
+      uses: actions/setup-java@v2
       with:
         java-version: '11'
-        
-    - name: Build and Test
+
+    - name: Construir com Gradle
       run: |
-        ./gradlew build
-        ./gradlew test
-        
-    - name: Run Test
-      run: java -cp build/classes/java/main TesteControleAcesso
-      
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: true
-        tags: my-docker-repo/my-java-app:latest
+        ./gradle wrapper
+        ./gradle build
+
+    - name: Executar testes
+      run: ./gradlew test
