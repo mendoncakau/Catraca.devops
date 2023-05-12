@@ -13,13 +13,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      
-    - name: Instalando JDK
+    - name: Set up JDK
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        
-    - name: Compilar e executar testes
+        distribution: 'adopt'
+    - name: Compile Java
+      run: javac -cp src src/Main.java
+      
+    - name: Compile Test
+      run: javac -cp src src/TesteControleAcesso.java
+      
+    - name: Run Test
       run: |
-        javac -cp src src/*.java
-        java -cp src TesteControleAcesso
+       java -cp src TesteControleAcesso
