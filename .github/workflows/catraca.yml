@@ -31,6 +31,7 @@ jobs:
     - name: Docker Build & Push Action
       uses: mr-smithers-excellent/docker-build-push@v6.2
       with:
+        image: docker-image-name
         username: ${{ secrets.DOCKER_USER }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: your-docker-repository-name
