@@ -1,6 +1,10 @@
 name: Java CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -18,9 +22,7 @@ jobs:
 
     - name: Construir com Gradle
       run: |
-        ./gradle wrapper
-        ./gradle build
+        ./gradlew build
 
     - name: Executar testes
       run: ./gradlew test
-
