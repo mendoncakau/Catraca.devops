@@ -2,27 +2,24 @@ name: Java CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
-    - name: Verificar código
-      uses: actions/checkout@v2
-
-    - name: Configurar JDK
+    - uses: actions/checkout@v2
+      
+    - name: Instalando JDK
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'adopt'
-
-    - name: Construir com Gradle
+        
+    - name: Compilar e executar testes
       run: |
-        ./gradlew build
-
-    - name: Executar testes
-      run: ./gradlew test
+        javac -cp src src/*.java
+        java -cp src TesteControleAcesso
