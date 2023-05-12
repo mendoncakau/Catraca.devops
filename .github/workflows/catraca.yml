@@ -1,36 +1,30 @@
-name: Java CI with Gradle
+name: Java CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Set up JDK 11
+    - name: Set up JDK
       uses: actions/setup-java@v2
       with:
         java-version: '11'
         distribution: 'adopt'
+    - name: Compile Java
+      run: javac -cp src src/Main.java
+      
+    - name: Compile Test
+      run: javac -cp src src/TesteControleAcesso.java
+      
+    - name: Run Test
+      run: |
+       java -cp src TesteControleAcesso
 
-    - name: Build with Gradle
-      run: ./gradlew build
-
-    - name: Test with JUnit
-      run: ./gradlew test
-
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: true
-        tags: <kauem>/<dockercatraca>:latest
-        secrets: |
-          ${{ secrets.DOCKER_USERNAME }}
-          ${{ secrets.DOCKER_PASSWORD }}
