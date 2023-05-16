@@ -1,4 +1,4 @@
-name: Java CI
+name: catraca ci nativo
 
 on:
   push:
@@ -12,19 +12,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK
-      uses: actions/setup-java@v2
+    - uses: actions/checkout@v3
+    - name: jdk setup
+      uses: actions/setup-java@v3
       with:
         java-version: '11'
-        distribution: 'adopt'
-    - name: Compile Java
-      run: javac -cp src src/Main.java
-      
-    - name: Compile Test
-      run: javac -cp src src/TesteControleAcesso.java
-      
-    - name: Run Test
+        distribution: 'temurin'
+    - name: build
       run: |
-       java -cp src TesteControleAcesso
-
+        cd src
+        javac -cp . Main.java
+        javac -cp . Testes.java
+    - name: exec
+      run: |
+        cd src
+        java -cp . Testes
+    - uses: mr-smithers-excellent/docker-build-push@v6
+      name: subindo no docker
+      with:
+        image: ${{secrets.DOCKER_USERNAME}}/catraca
+        tags: 1.0
+        registry: docker.io
+        dockerfile: dockerfile
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    - name: versioning
+      uses: codacy/git-version@2.4.0
+      with:
+        release-branch: main
+       
