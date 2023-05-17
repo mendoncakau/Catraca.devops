@@ -21,24 +21,24 @@ jobs:
     - name: build
       run: |
         cd src
-        javac -cp . Main.java
-        javac -cp . TesteControleAcesso.java
+        javac -cp . org/example/Main.java
+        javac -cp . org/example/TesteControleAcesso.java
     - name: exec
       run: |
         cd src
-        java -cp . TesteControleAcesso
-    - uses: mr-smithers-excellent/docker-build-push@v6
+        java -cp . org.example.TesteControleAcesso
+    - uses: docker/build-push-action@v2
       name: subindo no docker
       with:
-        image: ${{secrets.DOCKER_USERNAME}}/catraca
-        tags: 1.0
-        registry: docker.io
-        dockerfile: Dockerfile
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+        context: .
+        file: dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/catraca:1.0
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         
     - name: versioning
       uses: codacy/git-version@2.4.0
       with:
         release-branch: main
-       
