@@ -20,8 +20,10 @@ jobs:
         distribution: 'temurin'
     - name: build
       run: |
-       javac -cp ./src ./src/org/example/Main.java
-       javac -cp ./src ./src/org/example/TesteControleAcesso.java
+       cd src
+       javac -cp . org/example/Main.java
+       javac -cp . org/example/TesteControleAcesso.java
+
 
     - name: exec
       run: |
